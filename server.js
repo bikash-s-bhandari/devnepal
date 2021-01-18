@@ -3,12 +3,18 @@ const connectDB = require('./config/db');
 const app = express();
 const connectDb = require('./config/db');
 const PORT = process.env.PORT || 5000;
-
 connectDB();
-app.get('/', (req, res) => {
-    res.status(200).send('Api running')
 
-});
+//Init Middleware
+app.use(express.json({ extended: false }))//same as bodyparser.json()
+
+
+//Routes
+const users = require('./router/api/users');
+const auth = require('./router/api/auth');
+
+app.use('/api/users', users);
+app.use('/api/auth', auth);
 
 
 app.listen(PORT, () => {
