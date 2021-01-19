@@ -1,3 +1,4 @@
 {
-    "mongoURI": "mongodb+srv://bikash:cammando@cluster0.8njiv.mongodb.net/<dbname>?retryWrites=true&w=majority"
+    "mongoURI": "mongodb+srv://bikash:cammando@cluster0.8njiv.mongodb.net/<dbname>?retryWrites=true&w=majority",
+    "jwtSecrete": "bikash123!@#"
 }
