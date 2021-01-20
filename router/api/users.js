@@ -3,8 +3,10 @@ const router = express.Router();
 const { check, validationResult } = require('express-validator')
 const gravatar = require('gravatar')
 const User = require('../../models/User')
+const Profile = require('../../models/Profile')
 const jwt = require('jsonwebtoken');
 const config = require('config');
+const { authMiddleware } = require('../../middleware/auth');
 
 const ErrorResponse = require('../../utils/error_response')
 const asyncHandler = require('../../middleware/async_handler')
@@ -24,6 +26,12 @@ const registerValidation = [
 const loginValidation = [
     check('email', 'Please include a valid email').isEmail(),
     check('password', 'Please enter password').isLength({ min: 5 }).withMessage('Password must be between 5 characters'),
+
+];
+
+const profileValidation = [
+    check('status').not().isEmpty(),
+    check('skills', 'Skills is required!').not().isEmpty(),
 
 ];
 
@@ -119,6 +127,110 @@ router.post('/login', loginValidation, asyncHandler(async (req, res, next) => {
 
 
 }));
+
+//@route POST api/profile/me
+//@desc  Get users profile
+//@access Private
+router.get('/profile/me', authMiddleware, asyncHandler(async (req, res, next) => {
+    const profile = await Profile.findOne({ user: req.user.id }).populate('user', ['name', 'avatar']);
+    if (!profile) {
+        res.status(200).json({ msg: 'There is no profile for this user' })
+
+    }
+    res.status(200).json({ data: profile })
+
+
+
+
+}));
+
+
+//@route POST api/profile
+//@desc  Update or Create users profile
+//@access Private
+router.post('/profile', [authMiddleware, profileValidation], asyncHandler(async (req, res, next) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() })
+    }
+
+    //build a profile object
+    const profileFields = {};
+    profileFields.user = req.user.id;
+    const { company, website, location, bio, status, githubusername, skills } = req.body;
+    if (company) profileFields.company = company;
+    if (website) profileFields.website = website;
+    if (location) profileFields.location = location;
+    if (bio) profileFields.bio = bio;
+    if (status) profileFields.status = status;
+    if (githubusername) profileFields.githubusername = githubusername;
+    if (skills) profileFields.skills = skills.split(',').map(skill => skill.trim());
+
+    // Social
+    profileFields.social = {};
+    if (req.body.youtube) profileFields.social.youtube = req.body.youtube;
+    if (req.body.twitter) profileFields.social.twitter = req.body.twitter;
+    if (req.body.facebook) profileFields.social.facebook = req.body.facebook;
+    if (req.body.linkedin) profileFields.social.linkedin = req.body.linkedin;
+    if (req.body.instagram) profileFields.social.instagram = req.body.instagram;
+
+    let profile = await Profile.findOne({ user: req.user.id });
+    if (profile) {
+        //if profile exist then update
+        profile = await Profile.findOneAndUpdate(
+            { user: req.user.id },
+            { $set: profileFields },
+            { new: true }
+        )
+        return res.status(201).json({ data: profile })
+
+    } else {
+        //creating new profile
+        profile = new Profile(profileFields);
+        await profile.save();
+        res.status(201).json({ data: profile })
+
+
+
+
+    }
+
+}));
+
+//@route GET api/profile
+//@desc  Get all profiles
+//@access Public
+router.get('/profile', asyncHandler(async (req, res, next) => {
+    const profiles = await Profile.find().populate('user', ['name', 'avatar']);
+    res.status(200).json({ data: profiles })
+
+}));
+
+//@route GET api/profile/user/:user_id
+//@desc  Get Profile by user_id
+//@access Public
+router.get('/profile/user/:user_id', asyncHandler(async (req, res, next) => {
+    const profile = await Profile.findOne({ user: req.params.user_id });
+
+    res.status(200).json({ data: profile })
+
+}));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
