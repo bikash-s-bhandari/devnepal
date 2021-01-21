@@ -1,4 +1,6 @@
 {
     "mongoURI": "mongodb+srv://bikash:cammando@cluster0.8njiv.mongodb.net/<dbname>?retryWrites=true&w=majority",
-    "jwtSecrete": "bikash123!@#"
+    "jwtSecrete": "bikash123!@#",
+    "githubClientId": "8bdfa4d15eb1ff8a3e82",
+    "githubClientSecrete": "cca10eabe96167f94ea9da7b18571eebd04a5b2f"
 }

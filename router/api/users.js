@@ -6,6 +6,7 @@ const User = require('../../models/User')
 const Profile = require('../../models/Profile')
 const jwt = require('jsonwebtoken');
 const config = require('config');
+const request = require('request');
 const { authMiddleware } = require('../../middleware/auth');
 
 const ErrorResponse = require('../../utils/error_response')
@@ -32,6 +33,21 @@ const loginValidation = [
 const profileValidation = [
     check('status').not().isEmpty(),
     check('skills', 'Skills is required!').not().isEmpty(),
+
+];
+
+const experienceValidation = [
+    check('title', 'Title is required').not().isEmpty(),
+    check('company', 'Company is required!').not().isEmpty(),
+    check('from', 'From Date is required!').not().isEmpty(),
+
+];
+
+const educationValidation = [
+    check('school', 'School is required').not().isEmpty(),
+    check('degree', 'Degree is required!').not().isEmpty(),
+    check('fieldofstudy', 'Field of study is required!').not().isEmpty(),
+    check('from', 'From Date is required!').not().isEmpty(),
 
 ];
 
@@ -218,7 +234,151 @@ router.get('/profile/user/:user_id', asyncHandler(async (req, res, next) => {
 }));
 
 
+//@route DELETE api/profile
+//@desc  Delete Profile,User and Post
+//@access Private
+router.delete('/profile', authMiddleware, asyncHandler(async (req, res, next) => {
+    await Profile.findOneAndRemove({ user: req.user.id });
+    await User.findOneAndRemove({ _id: req.user.id });
 
+    res.status(200).json({ msg: "User deleted" })
+
+}));
+
+
+
+//@route PUT api/profile/experience
+//@desc  Add experience in profile
+//@access Private
+router.put('/profile/experience', [authMiddleware, experienceValidation], asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() })
+    }
+    const { title, company, from, to, location, current, description } = req.body;
+    const newExperience = {
+        title,
+        company,
+        from,
+        to,
+        location,
+        current,
+        description
+    }
+
+    const profile = await Profile.findOne({ user: req.user.id });
+    profile.experience.unshift(newExperience);
+    await profile.save();
+    res.status(200).json({ data: profile });
+
+
+}));
+
+
+
+
+
+
+//@route PUT api/profile/experience/:exp_id
+//@desc  Delete experience from profile
+//@access Private
+router.delete('/profile/experience/:exp_id', authMiddleware, asyncHandler(async (req, res, next) => {
+    const profile = await Profile.findOne({ user: req.user.id });
+    //get remove index
+    const removeIndex = profile.experience.map(item => item.id).indexOf(req.params.exp_id);
+    if (removeIndex == -1) {
+        return res.status(400).json({ msg: 'Experience doesnt exist with provided id' })
+
+    } else {
+        profile.experience.splice(removeIndex, 1);
+        await profile.save();
+        res.status(200).json({ data: profile })
+
+    }
+
+
+
+
+}));
+
+
+//@route PUT api/profile/education
+//@desc  Add education in profile
+//@access Private
+router.put('/profile/education', [authMiddleware, educationValidation], asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() })
+    }
+    const { school, degree, fieldofstudy, from, to, current, description } = req.body;
+    const newEducation = {
+        school,
+        degree,
+        fieldofstudy,
+        from,
+        to,
+        current,
+        description
+    }
+
+    const profile = await Profile.findOne({ user: req.user.id });
+    profile.education.unshift(newEducation);
+    await profile.save();
+    res.status(200).json({ data: profile });
+
+
+}));
+
+//@route PUT api/profile/education/:edu_id
+//@desc  Delete education from profile
+//@access Private
+router.delete('/profile/education/:edu_id', authMiddleware, asyncHandler(async (req, res, next) => {
+    const profile = await Profile.findOne({ user: req.user.id });
+    //get remove index
+    const removeIndex = profile.education.map(item => item.id).indexOf(req.params.edu_id);
+    if (removeIndex == -1) {
+        return res.status(400).json({ msg: 'Education doesnt exist with provided id' })
+
+    } else {
+        profile.education.splice(removeIndex, 1);
+        await profile.save();
+        res.status(200).json({ data: profile })
+
+    }
+
+
+
+
+}));
+
+//@route GET api/profile/github/username
+//@desc  Get github repositories of users
+//@access Private
+router.get('/profile/github/:username', authMiddleware, asyncHandler(async (req, res, next) => {
+    const options = {
+        uri: `https://api.github.com/users/${req.params.username}/repos?per_page=5&sort=created:asc&client_id=${config.get('githubClientId')}&client_secret=${config.get('githubClientSecrete')}`,
+        method: 'GET',
+        headers: { 'user-agent': 'node.js' }
+    };
+
+    request(options, (err, response, body) => {
+        if (err) console.log(err)
+
+        if (response.statusCode !== 200) {
+            return res.status(404).json({ msg: 'No github profile found!' })
+        }
+
+        res.status(200).json(JSON.parse(body))
+
+
+    });
+
+
+
+
+
+
+}));
 
 
 
