@@ -363,35 +363,16 @@ router.get('/profile/github/:username', authMiddleware, asyncHandler(async (req,
 
     request(options, (err, response, body) => {
         if (err) console.log(err)
-
         if (response.statusCode !== 200) {
             return res.status(404).json({ msg: 'No github profile found!' })
         }
-
         res.status(200).json(JSON.parse(body))
 
 
     });
 
 
-
-
-
-
 }));
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 const sendTokenResponse = async (user, statusCode, message, res) => {

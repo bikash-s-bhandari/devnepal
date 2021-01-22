@@ -12,9 +12,11 @@ app.use(express.json({ extended: false }))//same as bodyparser.json()
 //Routes
 const users = require('./router/api/users');
 const auth = require('./router/api/auth');
+const posts = require('./router/api/posts');
 
 app.use('/api/users', users);
 app.use('/api/auth', auth);
+app.use('/api/posts', posts)
 
 
 app.listen(PORT, () => {
