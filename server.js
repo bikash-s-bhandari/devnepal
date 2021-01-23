@@ -7,6 +7,8 @@ connectDB();
 
 //Init Middleware
 app.use(express.json({ extended: false }))//same as bodyparser.json()
+//error middleware 
+const errorHandler = require('./middleware/error')
 
 
 //Routes
@@ -17,6 +19,9 @@ const posts = require('./router/api/posts');
 app.use('/api/users', users);
 app.use('/api/auth', auth);
 app.use('/api/posts', posts)
+
+//error handler
+app.use(errorHandler);
 
 
 app.listen(PORT, () => {

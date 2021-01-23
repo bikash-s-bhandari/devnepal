@@ -124,14 +124,14 @@ router.post('/login', loginValidation, asyncHandler(async (req, res, next) => {
     const user = await User.findOne({ email: email });
 
     if (!user) {
-        return res.status(401).json({ msg: "The user doesn't exist with provided email" })
+        return next(new ErrorResponse(`The user doesn't exist with provided email`, 400));
 
     }
 
     //check if password is correct and matches
     const isMatch = await user.matchPassword(password);
     if (!isMatch) {
-        return res.status(401).json({ msg: "The password is incorrect!" })
+        return next(new ErrorResponse(`The password is incorrect`, 400));
 
     }
 
@@ -150,7 +150,7 @@ router.post('/login', loginValidation, asyncHandler(async (req, res, next) => {
 router.get('/profile/me', authMiddleware, asyncHandler(async (req, res, next) => {
     const profile = await Profile.findOne({ user: req.user.id }).populate('user', ['name', 'avatar']);
     if (!profile) {
-        res.status(200).json({ msg: 'There is no profile for this user' })
+        return next(new ErrorResponse(`There is no profile for this user`, 404));
 
     }
     res.status(200).json({ data: profile })
@@ -364,7 +364,8 @@ router.get('/profile/github/:username', authMiddleware, asyncHandler(async (req,
     request(options, (err, response, body) => {
         if (err) console.log(err)
         if (response.statusCode !== 200) {
-            return res.status(404).json({ msg: 'No github profile found!' })
+            return next(new ErrorResponse(`No github profile found!`, 404));
+
         }
         res.status(200).json(JSON.parse(body))
 
