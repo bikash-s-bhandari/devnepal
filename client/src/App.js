@@ -1,38 +1,43 @@
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import './App.css';
-import { Navbar, Home, Login, Register } from './Components/index'
+import { Navbar, Home, Login, Register, Alert } from './Components/index'
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
+import { Provider } from 'react-redux';
+import store from './redux/store';
+import setAuthToken from './Utils/setAuthToken'
+import { getUserData } from './redux/Actions/authActions'
 const App = () => {
+
+  if (localStorage.token) {
+    setAuthToken(localStorage.token)
+  }
+
+  useEffect(() => {
+    store.dispatch(getUserData())
+
+
+  }, [])
   return (
 
     <React.Fragment>
-      <Router>
-        <Navbar />
-
-
-        <Switch>
+      <Provider store={store}>
+        <Router>
+          <Navbar />
 
           <Route exact path="/" component={Home} />
-
           <section className="container">
-
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/register" component={Register} />
-
-
+            <Alert />
+            <Switch>
+              <Route exact path="/login" component={Login} />
+              <Route exact path="/register" component={Register} />
+            </Switch>
 
           </section>
-          {/* <Route render={() => <Redirect to="/" />} /> */}
 
 
-
-        </Switch>
-
-
-
-
-      </Router>
+        </Router>
+      </Provider>
     </React.Fragment>
 
   );

@@ -56,6 +56,7 @@ const educationValidation = [
 //@access Public
 
 router.post('/register', registerValidation, async (req, res) => {
+    console.log('CC', req.body)
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() })
