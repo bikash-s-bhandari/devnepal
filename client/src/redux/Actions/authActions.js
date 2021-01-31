@@ -1,20 +1,21 @@
 import { REGISTER_SUCCESS, REGISTER_FAIL, LOGIN_SUCCESS, LOGIN_FAIL, SET_USER, AUTH_ERROR, LOGOUT_USER } from '../types'
 import { setAlert } from './alertActions'
-// import { guest } from '../../Helpers/Axios'
-import axios from 'axios';
-import setAuthToken from '../../Utils/setAuthToken'
+import { Axios, setAuthToken } from '../../Helpers/Axios'
+import axios from 'axios'
+import Cookies from 'universal-cookie';
 
-export const registerUser = ({ name, email, password }) => async (dispatch) => {
-    const config = {
-        headers: {
-            "Content-Type": "application/json"
-        }
+const cookies = new Cookies();
+const config = {
+    headers: {
+        "Content-Type": "application/json"
     }
-    const body = JSON.stringify({ name, email, password })
-    console.log('Body', body)
+}
+export const registerUser = ({ name, email, password, confirmPassword }) => async (dispatch) => {
+
+    const body = JSON.stringify({ name, email, password, confirmPassword })
+
     try {
-        const res = await axios.post('/api/users/register', body, config);
-        console.log('Res', res)
+        const res = await Axios.post('/users/register', body, config);
         dispatch({
             type: REGISTER_SUCCESS,
             payload: res.data
@@ -22,16 +23,15 @@ export const registerUser = ({ name, email, password }) => async (dispatch) => {
         });
 
     } catch (err) {
-        console.log('errors', err.response?.data)
-        // const errors = err.response.data.errors;
-        // if (errors) {
-        //     errors.forEach(err => dispatch(setAlert(err.msg, 'danger')));
-        // }
-        // dispatch({
-        //     type: REGISTER_FAIL,
+        const errors = err.response.data.errors;
+        if (errors) {
+            errors.forEach(err => dispatch(setAlert(err.msg, 'danger')));
+        }
+        dispatch({
+            type: REGISTER_FAIL,
 
 
-        // });
+        });
 
 
     }
@@ -43,13 +43,13 @@ export const registerUser = ({ name, email, password }) => async (dispatch) => {
 }
 
 export const loginUser = (body) => (dispatch) => {
-    axios.defaults.baseURL = "http://localhost:5000"
-    axios.post('/api/users/login', body)
+
+    Axios.post('/users/login', body, config)
         .then((res) => {
-            console.log(res.data);
+
             const token = `Bearer ${res.data.token}`;
-            localStorage.setItem('token', `Bearer ${res.data.token}`);//setting token to localstorage
-            setAuthToken(token);
+            cookies.set('token', token);
+            setAuthToken(token)
             dispatch({
                 type: LOGIN_SUCCESS,
                 payload: res.data
@@ -71,13 +71,8 @@ export const loginUser = (body) => (dispatch) => {
 }
 
 export const getUserData = () => (dispatch) => {
-    if (localStorage.token) {
-        setAuthToken(localStorage.token)
-    }
 
-    axios.defaults.baseURL = "http://localhost:5000"
-
-    axios.get('/api/auth')
+    Axios.get('/auth')
         .then(res => {
             console.log('user data', res.data);
 
@@ -99,7 +94,7 @@ export const getUserData = () => (dispatch) => {
 }
 
 export const logoutUser = () => (dispatch) => {
-    delete axios.defaults.headers.common['Authorization']//deleting the entry
+    delete Axios.defaults.headers.common['Authorization']//deleting the entry
     dispatch({
         type: LOGOUT_USER
 

@@ -34,9 +34,11 @@ const Login = (props) => {
 
     }
 
+    console.log('isAuth', isAuthenticated)
+
     //redirect of login
     if (isAuthenticated) {
-        <Redirect to="/dashboard" />
+        <Redirect to="/" />
     }
     return (
         <>

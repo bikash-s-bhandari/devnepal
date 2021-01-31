@@ -1,4 +1,7 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors')
+
 const connectDB = require('./config/db');
 const app = express();
 const connectDb = require('./config/db');
@@ -8,7 +11,14 @@ connectDB();
 
 
 //Init Middleware
-app.use(express.json({ extended: false }))//same as bodyparser.json()
+app.use(express.json())//same as bodyparser.json()
+// app.use(bodyParser.json({
+//     limit: '50mb',
+//     parameterLimit: 100000
+// }))
+
+app.use(cors());
+
 
 //error middleware 
 const errorHandler = require('./middleware/error')
@@ -25,6 +35,11 @@ app.use('/api/posts', posts)
 
 //error handler
 app.use(errorHandler);
+
+
+
+
+
 
 
 app.listen(PORT, () => {

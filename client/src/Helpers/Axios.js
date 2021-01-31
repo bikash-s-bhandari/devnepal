@@ -1,12 +1,18 @@
 import axios from 'axios'
-export const guest = axios.create({
+export const Axios = axios.create({
     baseURL: 'http://localhost:5000/api',
+
 
 });
 
-// export const user = axios.create({
-//     baseURL: 'https://basobaas.com/api',
-//     headers: {
-//         Authorization: `Bearer ${cookies.get('token')}`,
-//     },
-// });
+export const setAuthToken = (token) => {
+    if (token) {
+
+        Axios.defaults.headers.common['Authorization'] = token;
+
+    } else {
+        delete Axios.defaults.headers.common['Authorization'];
+
+    }
+
+}

@@ -13,7 +13,7 @@ const Register = (props) => {
         name: '',
         email: '',
         password: '',
-        confirmedPassword: ''
+        confirmPassword: ''
     });
 
     const handleChange = (event) => {
@@ -26,7 +26,7 @@ const Register = (props) => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        if (values.password !== values.confirmedPassword) {
+        if (values.password !== values.confirmPassword) {
             setAlert('Confirm password did not match! ', 'danger')
         } else {
             registerUser(values);
@@ -77,8 +77,8 @@ const Register = (props) => {
                     <input
                         type="password"
                         placeholder="Confirm Password"
-                        name="confirmedPassword"
-                        value={values.confirmedPassword}
+                        name="confirmPassword"
+                        value={values.confirmPassword}
                         onChange={handleChange}
                     />
                 </div>
