@@ -40,9 +40,9 @@ const Navbar = ({ auth: { isAuthenticated, loading }, logoutUser }) => {
             <h1>
                 <Link to="/"><i className="fas fa-code"></i> Dev Nepal</Link>
             </h1>
-            {!loading && (<>
+            <>
                 {isAuthenticated ? authLinks : guestLinks}
-            </>)}
+            </>
 
         </nav>
     )

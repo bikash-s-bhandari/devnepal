@@ -3,7 +3,7 @@ import Cookies from 'universal-cookie';
 const cookies = new Cookies();
 const initialState = {
     isAuthenticated: false,
-    loading: false,
+    loading: true,
     token: cookies.get('token'),
     user: null
 }

@@ -11,7 +11,7 @@ export const checkAuthentication = () => {
     if (token) {
         const decodedToken = jwtDecode(token);
         if (decodedToken.exp * 1000 < Date.now()) {
-            store.dispatch(logoutUser());
+            // store.dispatch(logoutUser());
             //get refresh token here
 
 
