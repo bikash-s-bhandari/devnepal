@@ -1,7 +1,6 @@
 import { REGISTER_SUCCESS, REGISTER_FAIL, LOGIN_SUCCESS, LOGIN_FAIL, SET_USER, AUTH_ERROR, LOGOUT_USER } from '../types'
 import { setAlert } from './alertActions'
 import { Axios, setAuthToken } from '../../Helpers/Axios'
-import axios from 'axios'
 import Cookies from 'universal-cookie';
 
 const cookies = new Cookies();
@@ -48,11 +47,10 @@ export const loginUser = (body) => (dispatch) => {
         .then((res) => {
 
             const token = `Bearer ${res.data.token}`;
-            cookies.set('token', token);
             setAuthToken(token)
             dispatch({
                 type: LOGIN_SUCCESS,
-                payload: res.data
+                payload: res.data.data
             })
             dispatch(getUserData());
 
@@ -60,7 +58,10 @@ export const loginUser = (body) => (dispatch) => {
 
         })
         .catch((err) => {
-            console.log(err);
+            const errors = err.response.data.errors;
+            if (errors) {
+                errors.forEach(err => dispatch(setAlert(err.msg, 'danger')));
+            }
             dispatch({
                 type: LOGIN_FAIL,
 
@@ -71,19 +72,18 @@ export const loginUser = (body) => (dispatch) => {
 }
 
 export const getUserData = () => (dispatch) => {
-
     Axios.get('/auth')
         .then(res => {
-            console.log('user data', res.data);
-
+            console.log('fuck')
+            cookies.set('user', res.data.data)
             dispatch({
                 type: SET_USER,
-                payload: res.data
+                payload: res.data.data
 
             });
 
         }).catch(err => {
-            console.log(err.response);
+
             dispatch({
                 type: AUTH_ERROR
             })
@@ -95,6 +95,8 @@ export const getUserData = () => (dispatch) => {
 
 export const logoutUser = () => (dispatch) => {
     delete Axios.defaults.headers.common['Authorization']//deleting the entry
+    cookies.remove('token');
+    cookies.remove('user');
     dispatch({
         type: LOGOUT_USER
 

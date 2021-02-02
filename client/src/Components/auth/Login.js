@@ -7,6 +7,7 @@ import PropTypes from 'prop-types'
 
 const Login = (props) => {
     const { setAlert, loginUser, isAuthenticated } = props;
+    console.log('auth', isAuthenticated)
     const [values, setValues] = useState({
         email: '',
         password: ''
@@ -34,11 +35,9 @@ const Login = (props) => {
 
     }
 
-    console.log('isAuth', isAuthenticated)
-
     //redirect of login
     if (isAuthenticated) {
-        <Redirect to="/" />
+        return < Redirect to="/dashboard" />
     }
     return (
         <>
