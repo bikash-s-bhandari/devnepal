@@ -145,7 +145,7 @@ router.post('/login', loginValidation, asyncHandler(async (req, res, next) => {
 
 }));
 
-//@route POST api/profile/me
+//@route POST api/users/profile/me
 //@desc  Get users profile
 //@access Private
 router.get('/profile/me', authMiddleware, asyncHandler(async (req, res, next) => {

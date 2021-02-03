@@ -8,6 +8,7 @@ const Spinner = () => (
             style={{ width: '200px', margin: 'auto', display: 'block' }}
             alt="Loading..."
         />
+        <p style={{ textAlign: 'center' }}> Unauthenticated,Please login! </p>
     </Fragment>
 );
 

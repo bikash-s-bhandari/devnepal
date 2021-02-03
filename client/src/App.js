@@ -2,9 +2,7 @@
 import React, { useEffect } from 'react'
 import './App.css';
 import { Navbar, Home, Login, Register, Alert } from './Components/index'
-import Dashboard from './Pages/Dashboard/Dashboard'
-import NotFound from './Pages/404/NotFound'
-import ProfileForm from './Pages/User/ProfileForm'
+import { Dashboard, ProfileForm, AddEducation, AddExperience, NotFound } from './Pages'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { Provider } from 'react-redux';
 import store from './redux/store';
@@ -36,6 +34,8 @@ const App = () => {
               <Route exact path="/register" component={Register} />
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
               <PrivateRoute exact path="/edit-profile" component={ProfileForm} />
+              <PrivateRoute exact path="/add-education" component={AddEducation} />
+              <PrivateRoute exact path="/add-experience" component={AddExperience} />
               <Route component={NotFound} />
             </Switch>
 

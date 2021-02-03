@@ -7,3 +7,6 @@ export const LOGIN_FAIL = 'LOGIN_FAIL'
 export const SET_USER = 'SET_USER'
 export const AUTH_ERROR = 'AUTH_ERROR'
 export const LOGOUT_USER = 'LOGOUT_USER'
+export const GET_PROFILE = 'GET_PROFILE';
+export const UPDATE_PROFILE = 'UPDATE_PROFILE';
+export const PROFILE_ERROR = ' PROFILE_ERROR';
