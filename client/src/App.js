@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react'
 import './App.css';
 import { Navbar, Home, Login, Register, Alert } from './Components/index'
-import { Dashboard, ProfileForm, AddEducation, AddExperience, NotFound } from './Pages'
+import { Dashboard, ProfileForm, AddEducation, AddExperience, Posts, NotFound } from './Pages'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { Provider } from 'react-redux';
 import store from './redux/store';
@@ -32,6 +32,7 @@ const App = () => {
             <Switch>
               <Route exact path="/login" component={Login} />
               <Route exact path="/register" component={Register} />
+              <PrivateRoute exact path="/posts" component={Posts} />
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
               <PrivateRoute exact path="/edit-profile" component={ProfileForm} />
               <PrivateRoute exact path="/add-education" component={AddEducation} />

@@ -1,10 +1,7 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const cors = require('cors')
-
 const connectDB = require('./config/db');
 const app = express();
-const connectDb = require('./config/db');
 const PORT = process.env.PORT || 5000;
 connectDB();
 
@@ -12,11 +9,6 @@ connectDB();
 
 //Init Middleware
 app.use(express.json())//same as bodyparser.json()
-// app.use(bodyParser.json({
-//     limit: '50mb',
-//     parameterLimit: 100000
-// }))
-
 app.use(cors());
 
 
