@@ -4,12 +4,14 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import PostItem from './PostItem';
 import PostForm from './PostForm';
-// import { getPosts } from '../../actions/post';
-// { getPosts, post: { posts } }
-const Posts = () => {
-    //   useEffect(() => {
-    //     getPosts();
-    //   }, [getPosts]);
+import { getPosts } from '../../redux/Actions/postActions';
+
+const Posts = (props) => {
+    const { post: { posts }, getPosts } = props;
+    console.log('posts', posts)
+    useEffect(() => {
+        getPosts();
+    }, [getPosts]);
 
     return (
         <Fragment>
@@ -21,8 +23,9 @@ const Posts = () => {
 
 
             <div className="posts">
-                <PostItem />
-
+                {posts.length > 0 && posts.map((post) => (
+                    <PostItem key={post._id} post={post} />
+                ))}
 
 
             </div>
@@ -30,13 +33,17 @@ const Posts = () => {
     );
 };
 
-// Posts.propTypes = {
-//     getPosts: PropTypes.func.isRequired,
-//     post: PropTypes.object.isRequired
-// };
+Posts.propTypes = {
+    getPosts: PropTypes.func.isRequired,
+    post: PropTypes.object.isRequired
+};
 
-// const mapStateToProps = (state) => ({
-//     post: state.post
-// });
+const mapStateToProps = (state) => ({
+    post: state.post
+});
 
-export default Posts;
+const mapActionsToProps = {
+    getPosts
+}
+
+export default connect(mapStateToProps, mapActionsToProps)(Posts);

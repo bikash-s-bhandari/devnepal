@@ -113,7 +113,7 @@ router.put('/like/:id', authMiddleware, asyncHandler(async (req, res, next) => {
     await post.save();
 
 
-    res.status(200).json({ msg: 'Like success' })
+    res.status(200).json({ data: post.likes })
 }));
 
 //@route PUT api/posts/unlike/:id
@@ -139,7 +139,7 @@ router.put('/unlike/:id', authMiddleware, asyncHandler(async (req, res, next) =>
     if (removeIndex !== -1) {
         post.likes.splice(removeIndex, 1);
         await post.save();
-        res.status(200).json({ msg: 'Unlike success' })
+        res.status(200).json({ data: post.likes })
 
     }
 
@@ -169,7 +169,7 @@ router.post('/comment/:id', [authMiddleware, commentValidation], asyncHandler(as
     post.comments.unshift(newComment);
     await post.save();
 
-    return res.status(201).json({ data: post })
+    return res.status(201).json({ data: post.comments })
 }));
 
 //@route DELETE api/posts/comment/:id/:comment_id
